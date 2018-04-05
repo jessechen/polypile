@@ -12,9 +12,9 @@ function setup() {
 }
 
 function draw() {
-    noStroke();
+    stroke(color(0,15,85));
+    noFill();
     for (shape of shapes) {
-        fill(color(0,128,0));
         beginShape();
         for (p of shape.points) {
             vertex(p.x, p.y);
@@ -24,15 +24,21 @@ function draw() {
 }
 
 class Shape {
-    constructor(sides, sideLength) {
+    constructor(x0, y0, sides, sideLength) {
+        this.x0 = x0;
+        this.y0 = y0;
         this.sides = sides;
         this.sideLength = sideLength;
-        this.points = [
-            new Point(10, 10),
-            new Point(10, 20),
-            new Point(20, 20),
-            new Point(20, 10)
-        ];
+        this.points = [new Point(this.x0, this.y0)];
+
+        let angle = 0;
+        for (let i = 0; i < this.sides; i++) {
+            angle += TAU / this.sides;
+            let p = this.points[this.points.length - 1];
+            let dx = Math.cos(angle) * this.sideLength;
+            let dy = Math.sin(angle) * this.sideLength;
+            this.points.push(new Point(p.x + dx, p.y + dy));
+        }
     }
 }
 
@@ -44,5 +50,5 @@ class Point {
 }
 
 shapes = [
-    new Shape(8, 10)
+    new Shape(100, 100, 6, 50)
 ];
