@@ -13,12 +13,23 @@ function setup() {
 function draw() {
     stroke(color(0, 15, 85));
     noFill();
-    let x = -25;
+    let x0 = -25;
+    let deltaX = 0;
+    let x = x0;
     let y = -25;
-    while (x <= canvasWidth) {
-        let tile = new HexTile(new Point(x, y));
-        drawTile(tile);
-        x += tile.dx;
+    let tile = null;
+    while (y <= canvasHeight) {
+        x = x0 + deltaX;
+        while (x <= canvasWidth) {
+            tile = new HexTile(new Point(x, y));
+            drawTile(tile);
+            x += tile.dx;
+        }
+        y += tile.dy;
+        deltaX += tile.xOffset;
+        if (deltaX >= tile.dx) {
+            deltaX -= tile.dx;
+        }
     }
 }
 
@@ -64,6 +75,9 @@ class HexTile {
         this.shapes.push(new Shape(this.shapes[0].points[4], 6, 50));
 
         this.dx = this.shapes[1].points[1].x - this.shapes[0].points[5].x;
+        this.dy = this.shapes[1].points[3].y - this.shapes[0].points[0].y;
+
+        this.xOffset = this.shapes[0].points[2].x - this.shapes[0].points[0].x;
     }
 }
 
