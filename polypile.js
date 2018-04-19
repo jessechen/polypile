@@ -1,7 +1,6 @@
 const TAU = 2 * Math.PI;
 
 let canvasWidth, canvasHeight;
-let tile = [];
 
 function setup() {
     canvasWidth = windowWidth;
@@ -14,7 +13,17 @@ function setup() {
 function draw() {
     stroke(color(0, 15, 85));
     noFill();
-    for (shape of tile) {
+    let x = -25;
+    let y = -25;
+    while (x <= canvasWidth) {
+        let tile = new HexTile(new Point(x, y));
+        drawTile(tile);
+        x += tile.dx;
+    }
+}
+
+function drawTile(tile) {
+    for (shape of tile.shapes) {
         beginShape();
         for (p of shape.points) {
             vertex(p.x, p.y);
@@ -47,7 +56,14 @@ class Point {
     }
 }
 
-tile = [];
-tile.push(new Shape(new Point(25, 25), 6, 50));
-tile.push(new Shape(tile[0].points[2], 6, 50));
-tile.push(new Shape(tile[0].points[4], 6, 50));
+class HexTile {
+    constructor(initialPoint) {
+        this.shapes = [];
+        this.shapes.push(new Shape(initialPoint, 6, 50));
+        this.shapes.push(new Shape(this.shapes[0].points[2], 6, 50));
+        this.shapes.push(new Shape(this.shapes[0].points[4], 6, 50));
+
+        this.dx = this.shapes[1].points[1].x - this.shapes[0].points[5].x;
+    }
+}
+
