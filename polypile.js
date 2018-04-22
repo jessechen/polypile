@@ -21,7 +21,7 @@ function draw() {
     while (y <= canvasHeight) {
         x = x0 + deltaX;
         while (x <= canvasWidth) {
-            tile = new HexTile(new Point(x, y));
+            tile = new OctoTile(new Point(x, y));
             drawTile(tile);
             x += tile.dx;
         }
@@ -75,9 +75,21 @@ class HexTile {
         this.shapes.push(new Shape(this.shapes[0].points[4], 6, 50));
 
         this.dx = this.shapes[1].points[1].x - this.shapes[0].points[5].x;
-        this.dy = this.shapes[1].points[3].y - this.shapes[0].points[0].y;
+        this.dy = this.shapes[2].points[2].y - this.shapes[0].points[0].y;
 
-        this.xOffset = this.shapes[0].points[2].x - this.shapes[0].points[0].x;
+        this.xOffset = this.shapes[2].points[2].x - this.shapes[0].points[0].x;
     }
 }
 
+class OctoTile {
+    constructor(initialPoint) {
+        this.shapes = [];
+        this.shapes.push(new Shape(initialPoint, 8, 50));
+        this.shapes.push(new Shape(this.shapes[0].points[2], 4, 50));
+
+        this.dx = this.shapes[1].points[1].x - this.shapes[0].points[7].x;
+        this.dy = this.shapes[0].points[3].y - this.shapes[0].points[0].y;
+
+        this.xOffset = this.shapes[0].points[3].x - this.shapes[0].points[0].x;
+    }
+}
