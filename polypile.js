@@ -1,5 +1,6 @@
 const TAU = 2 * Math.PI;
 
+let size = 50;
 let canvasWidth, canvasHeight;
 
 function setup() {
@@ -44,16 +45,15 @@ function drawTile(tile) {
 }
 
 class Shape {
-    constructor(initialPoint, sides, sideLength) {
+    constructor(initialPoint, sides, initialAngle=0) {
         this.sides = sides;
-        this.sideLength = sideLength;
         this.points = [initialPoint];
 
-        let angle = 0;
+        let angle = initialAngle;
         for (let i = 0; i < this.sides; i++) {
             let p = this.points[this.points.length - 1];
-            let dx = Math.cos(angle) * this.sideLength;
-            let dy = Math.sin(angle) * this.sideLength;
+            let dx = Math.cos(angle) * size;
+            let dy = Math.sin(angle) * size;
             this.points.push(new Point(p.x + dx, p.y + dy));
             angle += TAU / this.sides;
         }
@@ -70,9 +70,9 @@ class Point {
 class HexTile {
     constructor(initialPoint) {
         this.shapes = [];
-        this.shapes.push(new Shape(initialPoint, 6, 50));
-        this.shapes.push(new Shape(this.shapes[0].points[2], 6, 50));
-        this.shapes.push(new Shape(this.shapes[0].points[4], 6, 50));
+        this.shapes.push(new Shape(initialPoint, 6));
+        this.shapes.push(new Shape(this.shapes[0].points[2], 6));
+        this.shapes.push(new Shape(this.shapes[0].points[4], 6));
 
         this.dx = this.shapes[1].points[1].x - this.shapes[0].points[5].x;
         this.dy = this.shapes[2].points[2].y - this.shapes[0].points[0].y;
@@ -84,8 +84,22 @@ class HexTile {
 class OctoTile {
     constructor(initialPoint) {
         this.shapes = [];
-        this.shapes.push(new Shape(initialPoint, 8, 50));
-        this.shapes.push(new Shape(this.shapes[0].points[2], 4, 50));
+        this.shapes.push(new Shape(initialPoint, 8));
+        this.shapes.push(new Shape(this.shapes[0].points[2], 4));
+
+        this.dx = this.shapes[1].points[1].x - this.shapes[0].points[7].x;
+        this.dy = this.shapes[0].points[3].y - this.shapes[0].points[0].y;
+
+        this.xOffset = this.shapes[0].points[3].x - this.shapes[0].points[0].x;
+    }
+}
+
+class DodecaTile {
+    constructor(initialPoint) {
+        this.shapes = [];
+        this.shapes.push(new Shape(initialPoint, 12));
+        this.shapes.push(new Shape(this.shapes[0].points[2], 3));
+        this.shapes.push(new Shape(this.shapes[0].points[2], 3));
 
         this.dx = this.shapes[1].points[1].x - this.shapes[0].points[7].x;
         this.dy = this.shapes[0].points[3].y - this.shapes[0].points[0].y;
