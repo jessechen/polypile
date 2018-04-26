@@ -14,15 +14,15 @@ function setup() {
 function draw() {
     stroke(color(0, 15, 85));
     noFill();
-    let x0 = -25;
+    let x0 = -size;
     let deltaX = 0;
     let x = x0;
-    let y = -25;
+    let y = -size;
     let tile = null;
     while (y <= canvasHeight) {
         x = x0 + deltaX;
         while (x <= canvasWidth) {
-            tile = new DodecaTile(new Point(x, y));
+            tile = new DodecaHexTile(new Point(x, y));
             drawTile(tile);
             x += tile.dx;
         }
@@ -105,5 +105,25 @@ class DodecaTile {
         this.dy = this.shapes[0].points[5].y - this.shapes[0].points[0].y;
 
         this.xOffset = this.shapes[0].points[5].x - this.shapes[0].points[0].x;
+    }
+}
+
+class DodecaHexTile {
+    constructor(initialPoint) {
+        this.shapes = [];
+        this.shapes.push(new Shape(initialPoint, 12));
+        this.shapes.push(new Shape(this.shapes[0].points[0], 4, -TAU/4));
+        this.shapes.push(new Shape(this.shapes[0].points[1], 6, -TAU/4));
+        this.shapes.push(new Shape(this.shapes[0].points[2], 4, -TAU/12));
+        this.shapes.push(new Shape(this.shapes[0].points[3], 6, -TAU/12));
+        this.shapes.push(new Shape(this.shapes[0].points[4], 4, TAU/12));
+
+        const dodecaWidth = this.shapes[0].points[3].x - this.shapes[0].points[9].x;
+        const hexWidth = this.shapes[2].points[3].x - this.shapes[2].points[0].x;
+        const squareWidth = this.shapes[1].points[2].x - this.shapes[1].points[0].x;
+        this.dx = dodecaWidth + (2 * hexWidth) + squareWidth;
+        this.dy = this.shapes[4].points[3].y - this.shapes[0].points[0].y;
+
+        this.xOffset = this.shapes[4].points[3].x - this.shapes[0].points[0].x;
     }
 }
