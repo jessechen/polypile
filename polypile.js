@@ -22,7 +22,7 @@ function draw() {
     while (y <= canvasHeight) {
         x = x0 + deltaX;
         while (x <= canvasWidth) {
-            tile = new OctoTile(new Point(x, y));
+            tile = new DodecaTile(new Point(x, y));
             drawTile(tile);
             x += tile.dx;
         }
@@ -99,11 +99,11 @@ class DodecaTile {
         this.shapes = [];
         this.shapes.push(new Shape(initialPoint, 12));
         this.shapes.push(new Shape(this.shapes[0].points[2], 3));
-        this.shapes.push(new Shape(this.shapes[0].points[2], 3));
+        this.shapes.push(new Shape(this.shapes[0].points[4], 3, TAU/6));
 
-        this.dx = this.shapes[1].points[1].x - this.shapes[0].points[7].x;
-        this.dy = this.shapes[0].points[3].y - this.shapes[0].points[0].y;
+        this.dx = this.shapes[1].points[1].x - this.shapes[0].points[11].x;
+        this.dy = this.shapes[0].points[5].y - this.shapes[0].points[0].y;
 
-        this.xOffset = this.shapes[0].points[3].x - this.shapes[0].points[0].x;
+        this.xOffset = this.shapes[0].points[5].x - this.shapes[0].points[0].x;
     }
 }
