@@ -14,22 +14,23 @@ function setup() {
 function draw() {
     stroke(color(0, 15, 85));
     noFill();
-    let x0 = -size;
-    let deltaX = 0;
-    let x = x0;
-    let y = -size;
-    let tile = null;
+    let initialPoint = new Point(-size, -size);
+    let x = initialPoint.x;
+    let y = initialPoint.y;
+    let xOffset = 0;
+    let tile;
+
     while (y <= canvasHeight) {
-        x = x0 + deltaX;
+        x = initialPoint.x + xOffset;
         while (x <= canvasWidth) {
             tile = new DodecaHexTile(new Point(x, y));
             drawTile(tile);
-            x += tile.dx;
+            x += tile.tileOffset;
         }
-        y += tile.dy;
-        deltaX += tile.xOffset;
-        if (deltaX >= tile.dx) {
-            deltaX -= tile.dx;
+        xOffset += tile.rowOffset.x;
+        y += tile.rowOffset.y;
+        while (xOffset >= tile.tileOffset) {
+            xOffset -= tile.tileOffset;
         }
     }
 }
@@ -45,18 +46,32 @@ function drawTile(tile) {
 }
 
 class Shape {
-    constructor(initialPoint, sides, initialAngle=0) {
+    constructor(initialPoint, sides, initialAngle = 0) {
         this.sides = sides;
-        this.points = [initialPoint];
+        this.initialPoint = initialPoint;
+        this.leftmostPoint = initialPoint;
+        this.rightmostPoint = initialPoint;
+        this.points = [this.initialPoint];
 
         let angle = initialAngle;
-        for (let i = 0; i < this.sides; i++) {
+        for (let i = 1; i < this.sides; i++) {
             let p = this.points[this.points.length - 1];
             let dx = Math.cos(angle) * size;
             let dy = Math.sin(angle) * size;
-            this.points.push(new Point(p.x + dx, p.y + dy));
+            let newPoint = new Point(p.x + dx, p.y + dy);
+            this.points.push(newPoint);
             angle += TAU / this.sides;
+
+            if (newPoint.x <= this.leftmostPoint.x) {
+               this.leftmostPoint = newPoint;
+            }
+            if (newPoint.x >= this.rightmostPoint.x) {
+               this.rightmostPoint = newPoint;
+            }
         }
+
+        let xs = this.points.map(p => p.x);
+        this.boundingWidth = Math.max(...xs) - Math.min(...xs);
     }
 }
 
@@ -65,19 +80,9 @@ class Point {
         this.x = x;
         this.y = y;
     }
-}
 
-class HexTile {
-    constructor(initialPoint) {
-        this.shapes = [];
-        this.shapes.push(new Shape(initialPoint, 6));
-        this.shapes.push(new Shape(this.shapes[0].points[2], 6));
-        this.shapes.push(new Shape(this.shapes[0].points[4], 6));
-
-        this.dx = this.shapes[1].points[1].x - this.shapes[0].points[5].x;
-        this.dy = this.shapes[2].points[2].y - this.shapes[0].points[0].y;
-
-        this.xOffset = this.shapes[2].points[2].x - this.shapes[0].points[0].x;
+    minus(other) {
+        return new Point(this.x - other.x, this.y - other.y);
     }
 }
 
@@ -87,10 +92,8 @@ class OctoTile {
         this.shapes.push(new Shape(initialPoint, 8));
         this.shapes.push(new Shape(this.shapes[0].points[2], 4));
 
-        this.dx = this.shapes[1].points[1].x - this.shapes[0].points[7].x;
-        this.dy = this.shapes[0].points[3].y - this.shapes[0].points[0].y;
-
-        this.xOffset = this.shapes[0].points[3].x - this.shapes[0].points[0].x;
+        this.tileOffset = this.shapes[0].boundingWidth + this.shapes[1].boundingWidth;
+        this.rowOffset = this.shapes[1].leftmostPoint.minus(initialPoint);
     }
 }
 
@@ -101,10 +104,8 @@ class DodecaTile {
         this.shapes.push(new Shape(this.shapes[0].points[2], 3));
         this.shapes.push(new Shape(this.shapes[0].points[4], 3, TAU/6));
 
-        this.dx = this.shapes[1].points[1].x - this.shapes[0].points[11].x;
-        this.dy = this.shapes[0].points[5].y - this.shapes[0].points[0].y;
-
-        this.xOffset = this.shapes[0].points[5].x - this.shapes[0].points[0].x;
+        this.tileOffset = this.shapes[0].boundingWidth;
+        this.rowOffset = this.shapes[2].leftmostPoint.minus(initialPoint);
     }
 }
 
@@ -118,12 +119,11 @@ class DodecaHexTile {
         this.shapes.push(new Shape(this.shapes[0].points[3], 6, -TAU/12));
         this.shapes.push(new Shape(this.shapes[0].points[4], 4, TAU/12));
 
-        const dodecaWidth = this.shapes[0].points[3].x - this.shapes[0].points[9].x;
-        const hexWidth = this.shapes[2].points[3].x - this.shapes[2].points[0].x;
-        const squareWidth = this.shapes[1].points[2].x - this.shapes[1].points[0].x;
-        this.dx = dodecaWidth + (2 * hexWidth) + squareWidth;
-        this.dy = this.shapes[4].points[3].y - this.shapes[0].points[0].y;
-
-        this.xOffset = this.shapes[4].points[3].x - this.shapes[0].points[0].x;
+        this.tileOffset =
+            this.shapes[0].boundingWidth +
+            this.shapes[1].boundingWidth +
+            this.shapes[2].boundingWidth +
+            this.shapes[4].boundingWidth;
+        this.rowOffset = this.shapes[4].rightmostPoint.minus(initialPoint);
     }
 }
