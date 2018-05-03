@@ -23,7 +23,7 @@ function draw() {
     while (y <= canvasHeight) {
         x = initialPoint.x + xOffset;
         while (x <= canvasWidth) {
-            tile = new DodecaHexTile(new Point(x, y));
+            tile = new HexTile(new Point(x, y));
             drawTile(tile);
             x += tile.tileOffset;
         }
@@ -118,6 +118,25 @@ class DodecaHexTile {
         this.shapes.push(new Shape(this.shapes[0].points[2], 4, -TAU/12));
         this.shapes.push(new Shape(this.shapes[0].points[3], 6, -TAU/12));
         this.shapes.push(new Shape(this.shapes[0].points[4], 4, TAU/12));
+
+        this.tileOffset =
+            this.shapes[0].boundingWidth +
+            this.shapes[1].boundingWidth +
+            this.shapes[2].boundingWidth +
+            this.shapes[4].boundingWidth;
+        this.rowOffset = this.shapes[4].rightmostPoint.minus(initialPoint);
+    }
+}
+
+class HexTile {
+    constructor(initialPoint) {
+        this.shapes = [];
+        this.shapes.push(new Shape(initialPoint, 6));
+        this.shapes.push(new Shape(this.shapes[0].points[0], 4, -TAU/4));
+        this.shapes.push(new Shape(this.shapes[0].points[1], 3, -TAU/4));
+        this.shapes.push(new Shape(this.shapes[0].points[1], 4, -TAU/12));
+        this.shapes.push(new Shape(this.shapes[0].points[2], 3, -TAU/12));
+        this.shapes.push(new Shape(this.shapes[0].points[2], 4, TAU/12));
 
         this.tileOffset =
             this.shapes[0].boundingWidth +
