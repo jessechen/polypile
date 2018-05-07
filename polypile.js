@@ -1,5 +1,6 @@
 let size = 50;
 let canvasWidth, canvasHeight;
+let tileDropdown;
 
 function setup() {
     canvasWidth = windowWidth;
@@ -9,15 +10,23 @@ function setup() {
     noLoop();
     const controls = createDiv();
     controls.addClass('controls');
-    const dropdown = createSelect();
-    dropdown.parent(controls);
-    dropdown.addClass('pattern-selector');
+    tileDropdown = createSelect();
+    tileDropdown.parent(controls);
+    tileDropdown.addClass('pattern-selector');
     for (let [value, tileType] of tileRegistry) {
-        dropdown.option(tileType.description(), value);
+        tileDropdown.option(tileType.description(), value);
     }
+    tileDropdown.selected(3);
+    tileDropdown.changed(handleTileChange);
+    handleTileChange();
 }
 
 function draw() {
+
+}
+
+function drawPattern(tileType) {
+    background(240);
     stroke(color(0, 15, 85));
     noFill();
     let initialPoint = new Point(-size, -size);
@@ -29,7 +38,7 @@ function draw() {
     while (y <= canvasHeight) {
         x = initialPoint.x + xOffset;
         while (x <= canvasWidth) {
-            tile = new HexTile(new Point(x, y));
+            tile = new tileType(new Point(x, y));
             drawTile(tile);
             x += tile.tileOffset;
         }
@@ -39,6 +48,14 @@ function draw() {
             xOffset -= tile.tileOffset;
         }
     }
+}
+
+function handleTileChange() {
+    let newTile = tileRegistry.get(tileDropdown.value());
+    if (!newTile) {
+        return;
+    }
+    drawPattern(newTile);
 }
 
 function drawTile(tile) {
@@ -158,8 +175,8 @@ class HexTile {
 }
 
 const tileRegistry = new Map([
-    [1, OctoTile],
-    [2, DodecaTile],
-    [3, DodecaHexTile],
-    [4, HexTile]
+    ['1', OctoTile],
+    ['2', DodecaTile],
+    ['3', DodecaHexTile],
+    ['4', HexTile]
 ]);
