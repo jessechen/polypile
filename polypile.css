@@ -1,4 +1,18 @@
 body {
-    margin: 0;
     box-sizing: border-box;
+    margin: 0;
+}
+
+.controls {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: .5em;
+    margin: 0;
+    position: absolute;
+    top: 1em;
+    right: 1em;
+}
+
+.pattern-selector {
+    margin: 1em;
 }

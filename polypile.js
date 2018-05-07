@@ -1,5 +1,3 @@
-const TAU = 2 * Math.PI;
-
 let size = 50;
 let canvasWidth, canvasHeight;
 
@@ -9,6 +7,14 @@ function setup() {
     createCanvas(canvasWidth, canvasHeight);
     background(240);
     noLoop();
+    const controls = createDiv();
+    controls.addClass('controls');
+    const dropdown = createSelect();
+    dropdown.parent(controls);
+    dropdown.addClass('pattern-selector');
+    for (let [value, tileType] of tileRegistry) {
+        dropdown.option(tileType.description(), value);
+    }
 }
 
 function draw() {
@@ -87,6 +93,7 @@ class Point {
 }
 
 class OctoTile {
+    static description() { return '8,4' };
     constructor(initialPoint) {
         this.shapes = [];
         this.shapes.push(new Shape(initialPoint, 8));
@@ -98,6 +105,7 @@ class OctoTile {
 }
 
 class DodecaTile {
+    static description() { return '12,3,3' };
     constructor(initialPoint) {
         this.shapes = [];
         this.shapes.push(new Shape(initialPoint, 12));
@@ -110,6 +118,7 @@ class DodecaTile {
 }
 
 class DodecaHexTile {
+    static description() { return '12,4,6,4,6,4' };
     constructor(initialPoint) {
         this.shapes = [];
         this.shapes.push(new Shape(initialPoint, 12));
@@ -129,6 +138,7 @@ class DodecaHexTile {
 }
 
 class HexTile {
+    static description() { return '12,4,3,4,3,4' };
     constructor(initialPoint) {
         this.shapes = [];
         this.shapes.push(new Shape(initialPoint, 6));
@@ -146,3 +156,10 @@ class HexTile {
         this.rowOffset = this.shapes[4].rightmostPoint.minus(initialPoint);
     }
 }
+
+const tileRegistry = new Map([
+    [1, OctoTile],
+    [2, DodecaTile],
+    [3, DodecaHexTile],
+    [4, HexTile]
+]);
