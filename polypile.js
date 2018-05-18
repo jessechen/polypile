@@ -2,13 +2,17 @@ let size = 50;
 let canvasWidth, canvasHeight;
 let tileDropdown;
 
+Array.prototype.last = function() {
+    return this[this.length - 1];
+};
+
 function setup() {
     canvasWidth = windowWidth;
     canvasHeight = windowHeight;
     createCanvas(canvasWidth, canvasHeight);
     background(240);
     noLoop();
-    const controls = createDiv();
+    let controls = createDiv();
     controls.addClass('controls');
     tileDropdown = createSelect();
     tileDropdown.parent(controls);
@@ -16,13 +20,12 @@ function setup() {
     for (let [value, tileType] of tileRegistry) {
         tileDropdown.option(tileType.description(), value);
     }
-    tileDropdown.selected(3);
+    tileDropdown.selected(1);
     tileDropdown.changed(handleTileChange);
     handleTileChange();
 }
 
 function draw() {
-
 }
 
 function drawPattern(tileType) {
@@ -65,7 +68,23 @@ function drawTile(tile) {
             vertex(p.x, p.y);
         }
         endShape(CLOSE);
+        drawStar(shape, 3/16*TAU);
     }
+}
+
+function drawStar(shape, angle) {
+    let midpoints = [shape.points[0].midpoint(shape.points.last())];
+    for (i = 1; i < shape.points.length; i++) {
+        midpoints.push(shape.points[i].midpoint(shape.points[i - 1]))
+    }
+
+    stroke(color(0, 144, 0));
+    strokeWeight(3);
+    for (p of midpoints) {
+        point(p.x, p.y);
+    }
+    stroke(color(0, 15, 85));
+    strokeWeight(1);
 }
 
 class Shape {
@@ -78,7 +97,7 @@ class Shape {
 
         let angle = initialAngle;
         for (let i = 1; i < this.sides; i++) {
-            let p = this.points[this.points.length - 1];
+            let p = this.points.last();
             let dx = Math.cos(angle) * size;
             let dy = Math.sin(angle) * size;
             let newPoint = new Point(p.x + dx, p.y + dy);
@@ -106,6 +125,10 @@ class Point {
 
     minus(other) {
         return new Point(this.x - other.x, this.y - other.y);
+    }
+
+    midpoint(other) {
+        return new Point((this.x + other.x) / 2, (this.y + other.y) / 2);
     }
 }
 
@@ -155,7 +178,7 @@ class DodecaHexTile {
 }
 
 class HexTile {
-    static description() { return '12,4,3,4,3,4' };
+    static description() { return '6,4,3,4,3,4' };
     constructor(initialPoint) {
         this.shapes = [];
         this.shapes.push(new Shape(initialPoint, 6));
