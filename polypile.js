@@ -113,8 +113,7 @@ class Shape {
         }
 
         this.sides.push(new Side(this.points.last(), this.points[0]));
-        let xs = this.points.map(p => p.x);
-        this.boundingWidth = Math.max(...xs) - Math.min(...xs);
+        this.boundingWidth = this.rightmostPoint.x - this.leftmostPoint.x;
     }
 }
 
