@@ -73,10 +73,7 @@ function drawTile(tile) {
 }
 
 function drawStar(shape, angle) {
-    let midpoints = [shape.points[0].midpoint(shape.points.last())];
-    for (i = 1; i < shape.points.length; i++) {
-        midpoints.push(shape.points[i].midpoint(shape.points[i - 1]))
-    }
+    let midpoints = shape.sides.map(side => side.midpoint());
 
     stroke(color(0, 144, 0));
     strokeWeight(3);
@@ -88,21 +85,22 @@ function drawStar(shape, angle) {
 }
 
 class Shape {
-    constructor(initialPoint, sides, initialAngle = 0) {
-        this.sides = sides;
+    constructor(initialPoint, numSides, initialAngle = 0) {
         this.initialPoint = initialPoint;
         this.leftmostPoint = initialPoint;
         this.rightmostPoint = initialPoint;
         this.points = [this.initialPoint];
+        this.sides = [];
 
         let angle = initialAngle;
-        for (let i = 1; i < this.sides; i++) {
+        for (let i = 1; i < numSides; i++) {
             let p = this.points.last();
             let dx = Math.cos(angle) * size;
             let dy = Math.sin(angle) * size;
             let newPoint = new Point(p.x + dx, p.y + dy);
+            this.sides.push(new Side(this.points.last(), newPoint));
             this.points.push(newPoint);
-            angle += TAU / this.sides;
+            angle += TAU / numSides;
 
             if (newPoint.x <= this.leftmostPoint.x) {
                this.leftmostPoint = newPoint;
@@ -112,6 +110,7 @@ class Shape {
             }
         }
 
+        this.sides.push(new Side(this.points.last(), this.points[0]));
         let xs = this.points.map(p => p.x);
         this.boundingWidth = Math.max(...xs) - Math.min(...xs);
     }
@@ -126,9 +125,16 @@ class Point {
     minus(other) {
         return new Point(this.x - other.x, this.y - other.y);
     }
+}
 
-    midpoint(other) {
-        return new Point((this.x + other.x) / 2, (this.y + other.y) / 2);
+class Side {
+    constructor(p1, p2) {
+        this.p1 = p1;
+        this.p2 = p2;
+    }
+
+    midpoint() {
+        return new Point((this.p1.x + this.p2.x) / 2, (this.p1.y + this.p2.y) / 2)
     }
 }
 
