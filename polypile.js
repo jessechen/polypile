@@ -73,15 +73,17 @@ function drawTile(tile) {
 }
 
 function drawStar(shape, angle) {
-    let midpoints = shape.sides.map(side => side.midpoint());
-
     stroke(color(0, 144, 0));
-    strokeWeight(3);
-    for (p of midpoints) {
-        point(p.x, p.y);
+    for(side of shape.sides) {
+        let midpoint = side.midpoint();
+        let initialAngle = side.angle();
+        initialAngle += TAU/4;
+        let dx = Math.cos(initialAngle) * 25;
+        let dy = Math.sin(initialAngle) * 25;
+        let newPoint = new Point(midpoint.x + dx, midpoint.y + dy);
+        line(midpoint.x, midpoint.y, newPoint.x, newPoint.y);
     }
     stroke(color(0, 15, 85));
-    strokeWeight(1);
 }
 
 class Shape {
@@ -134,7 +136,19 @@ class Side {
     }
 
     midpoint() {
-        return new Point((this.p1.x + this.p2.x) / 2, (this.p1.y + this.p2.y) / 2)
+        return new Point((this.p1.x + this.p2.x) / 2, (this.p1.y + this.p2.y) / 2);
+    }
+
+    length() {
+        return Math.sqrt(Math.pow(this.p2.x - this.p1.x, 2) + Math.pow(this.p2.y - this.p1.y, 2));
+    }
+
+    angle() {
+        let result = Math.atan((this.p2.y - this.p1.y) / (this.p2.x - this.p1.x));
+        if (this.p2.x - this.p1.x < 0) {
+            result += TAU / 2;
+        }
+        return result;
     }
 }
 
