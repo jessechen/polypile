@@ -30,7 +30,7 @@ function draw() {
 
 function drawPattern(tileType) {
     background(240);
-    stroke(color(0, 15, 85));
+    stroke(color(0, 144, 0));
     noFill();
     let initialPoint = new Point(-size, -size);
     let x = initialPoint.x;
@@ -63,27 +63,56 @@ function handleTileChange() {
 
 function drawTile(tile) {
     for (shape of tile.shapes) {
-        beginShape();
-        for (p of shape.points) {
-            vertex(p.x, p.y);
-        }
-        endShape(CLOSE);
+        //beginShape();
+        //for (p of shape.points) {
+        //    vertex(p.x, p.y);
+        //}
+        //endShape(CLOSE);
         drawStar(shape, 3/16*TAU);
     }
 }
 
 function drawStar(shape, angle) {
-    stroke(color(0, 144, 0));
-    for(side of shape.sides) {
-        let midpoint = side.midpoint();
-        let initialAngle = side.angle();
-        initialAngle += TAU/4;
-        let dx = Math.cos(initialAngle) * 25;
-        let dy = Math.sin(initialAngle) * 25;
-        let newPoint = new Point(midpoint.x + dx, midpoint.y + dy);
-        line(midpoint.x, midpoint.y, newPoint.x, newPoint.y);
-    }
     stroke(color(0, 15, 85));
+    for (let i = 0; i < shape.sides.length; i++) {
+        // The assumption that adjacent sides' rays intersect only holds for
+        // convex polygons. Fortunately, all regular polygons are convex.
+        let currSide = shape.sides[i];
+        let currMidpoint = currSide.midpoint();
+        let currAngle = currSide.normalAngle() + TAU/2 - angle;
+        let currRayDirection = new Point(
+            currMidpoint.x + Math.cos(currAngle) * size,
+            currMidpoint.y + Math.sin(currAngle) * size);
+        let prevSide = i === 0 ? shape.sides.last() : shape.sides[i - 1];
+        let prevMidpoint = prevSide.midpoint();
+        let prevAngle = prevSide.normalAngle() + angle;
+        let prevRayDirection = new Point(
+            prevMidpoint.x + Math.cos(prevAngle) * size,
+            prevMidpoint.y + Math.sin(prevAngle) * size);
+        let intersection = intersect(
+            currMidpoint, currRayDirection, prevMidpoint, prevRayDirection);
+        if (intersection) {
+            line(currMidpoint.x, currMidpoint.y, intersection.x, intersection.y);
+            line(prevMidpoint.x, prevMidpoint.y, intersection.x, intersection.y);
+        }
+    }
+    stroke(color(0, 144, 0));
+}
+
+// Finds the intersection of two lines described by the points (p1, p2) and (p3, p4).
+// Returns null if the lines are parallel.
+// Algorithm from http://paulbourke.net/geometry/pointlineplane/
+function intersect(p1, p2, p3, p4) {
+    let denominator = ((p4.y - p3.y) * (p2.x - p1.x) - (p4.x - p3.x) * (p2.y - p1.y));
+    if (denominator === 0) {
+        // Lines are parallel
+        return null;
+    }
+    let ua = ((p4.x - p3.x) * (p1.y - p3.y) - (p4.y - p3.y) * (p1.x - p3.x)) / denominator;
+    let x = p1.x + ua * (p2.x - p1.x);
+    let y = p1.y + ua * (p2.y - p1.y);
+
+    return new Point(x, y);
 }
 
 class Shape {
@@ -142,7 +171,8 @@ class Side {
         return Math.sqrt(Math.pow(this.p2.x - this.p1.x, 2) + Math.pow(this.p2.y - this.p1.y, 2));
     }
 
-    angle() {
+    // Finds the angle normal to the side, pointing into the shape.
+    normalAngle() {
         let result = Math.atan((this.p2.y - this.p1.y) / (this.p2.x - this.p1.x));
         if (this.p2.x - this.p1.x < 0) {
             result += TAU / 2;
