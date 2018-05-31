@@ -1,3 +1,6 @@
 Start and end at - and + width, height
 Checkboxes for stars, base patterns
+Different angles per shape
+Factor out a redraw method
+Resize on window size change
 Deform on mouseover

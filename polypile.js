@@ -1,6 +1,8 @@
 let size = 50;
 let canvasWidth, canvasHeight;
 let tileDropdown;
+let drawShapes = false;
+let drawStars = true;
 
 Array.prototype.last = function() {
     return this[this.length - 1];
@@ -53,6 +55,17 @@ function drawPattern(tileType) {
     }
 }
 
+function keyPressed() {
+    if (keyCode === 49) { // 1 key
+        drawShapes = !drawShapes;
+        handleTileChange();
+    }
+    if (keyCode === 50) { // 2 key
+        drawStars = !drawStars;
+        handleTileChange();
+    }
+}
+
 function handleTileChange() {
     let newTile = tileRegistry.get(tileDropdown.value());
     if (!newTile) {
@@ -63,13 +76,23 @@ function handleTileChange() {
 
 function drawTile(tile) {
     for (shape of tile.shapes) {
-        //beginShape();
-        //for (p of shape.points) {
-        //    vertex(p.x, p.y);
-        //}
-        //endShape(CLOSE);
-        drawStar(shape, 3/16*TAU);
+        if (drawShapes) {
+            drawShape(shape);
+        }
+        if (drawStars) {
+            drawStar(shape, 3/16*TAU);
+        }
     }
+}
+
+function drawShape(shape) {
+    stroke(color(0, 144, 0));
+    beginShape();
+    for (p of shape.points) {
+        vertex(p.x, p.y);
+    }
+    endShape(CLOSE);
+    stroke(color(0, 15, 85));
 }
 
 function drawStar(shape, angle) {
