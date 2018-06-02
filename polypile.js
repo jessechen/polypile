@@ -98,7 +98,7 @@ function drawTile(tile) {
             drawShape(shape);
         }
         if (starsCheckbox.checked()) {
-            drawStar(shape, 3/16*TAU);
+            drawStar(shape, tile.starAngle);
         }
     }
 }
@@ -231,6 +231,7 @@ class OctoTile {
 
         this.tileOffset = this.shapes[0].boundingWidth + this.shapes[1].boundingWidth;
         this.rowOffset = this.shapes[1].leftmostPoint.minus(initialPoint);
+        this.starAngle = 3/16 * TAU;
     }
 }
 
@@ -244,6 +245,7 @@ class DodecaTile {
 
         this.tileOffset = this.shapes[0].boundingWidth;
         this.rowOffset = this.shapes[2].leftmostPoint.minus(initialPoint);
+        this.starAngle = 5/24 * TAU;
     }
 }
 
@@ -264,6 +266,7 @@ class DodecaHexTile {
             this.shapes[2].boundingWidth +
             this.shapes[4].boundingWidth;
         this.rowOffset = this.shapes[4].rightmostPoint.minus(initialPoint);
+        this.starAngle = 5/24 * TAU;
     }
 }
 
@@ -284,6 +287,7 @@ class HexTile {
             this.shapes[2].boundingWidth +
             this.shapes[4].boundingWidth;
         this.rowOffset = this.shapes[4].rightmostPoint.minus(initialPoint);
+        this.starAngle = 5/24 * TAU;
     }
 }
 
