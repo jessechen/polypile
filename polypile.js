@@ -56,17 +56,21 @@ function drawPattern(tileType) {
 }
 
 function keyPressed() {
-    if (keyCode === 49) { // 1 key
+    if (keyCode === 'G'.charCodeAt(0)) {
         drawShapes = !drawShapes;
-        handleTileChange();
+        update();
     }
-    if (keyCode === 50) { // 2 key
+    if (keyCode === 'S'.charCodeAt(0)) {
         drawStars = !drawStars;
-        handleTileChange();
+        update();
     }
 }
 
 function handleTileChange() {
+    update();
+}
+
+function update() {
     let newTile = tileRegistry.get(tileDropdown.value());
     if (!newTile) {
         return;
