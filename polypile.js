@@ -1,8 +1,6 @@
 let size = 50;
 let canvasWidth, canvasHeight;
-let tileDropdown;
-let drawShapes = false;
-let drawStars = true;
+let tileDropdown, gridCheckbox, starsCheckbox;
 
 Array.prototype.last = function() {
     return this[this.length - 1];
@@ -14,17 +12,33 @@ function setup() {
     createCanvas(canvasWidth, canvasHeight);
     background(240);
     noLoop();
+
+    let container = createDiv();
+    container.addClass('controls-container');
     let controls = createDiv();
     controls.addClass('controls');
+    controls.parent(container);
+
     tileDropdown = createSelect();
     tileDropdown.parent(controls);
     tileDropdown.addClass('pattern-selector');
+    tileDropdown.changed(updateControls);
     for (let [value, tileType] of tileRegistry) {
         tileDropdown.option(tileType.description(), value);
     }
     tileDropdown.selected(1);
-    tileDropdown.changed(handleTileChange);
-    handleTileChange();
+
+    gridCheckbox = createCheckbox('Show grid (G)', false);
+    gridCheckbox.parent(controls);
+    gridCheckbox.addClass('checkbox');
+    gridCheckbox.changed(updateControls);
+
+    starsCheckbox = createCheckbox('Show stars (S)', true);
+    starsCheckbox.parent(controls);
+    starsCheckbox.addClass('checkbox');
+    starsCheckbox.changed(updateControls);
+
+    update();
 }
 
 function draw() {
@@ -57,16 +71,16 @@ function drawPattern(tileType) {
 
 function keyPressed() {
     if (keyCode === 'G'.charCodeAt(0)) {
-        drawShapes = !drawShapes;
-        update();
+        gridCheckbox.checked(!gridCheckbox.checked());
+        updateControls();
     }
     if (keyCode === 'S'.charCodeAt(0)) {
-        drawStars = !drawStars;
-        update();
+        starsCheckbox.checked(!starsCheckbox.checked());
+        updateControls();
     }
 }
 
-function handleTileChange() {
+function updateControls() {
     update();
 }
 
@@ -80,10 +94,10 @@ function update() {
 
 function drawTile(tile) {
     for (shape of tile.shapes) {
-        if (drawShapes) {
+        if (gridCheckbox.checked()) {
             drawShape(shape);
         }
-        if (drawStars) {
+        if (starsCheckbox.checked()) {
             drawStar(shape, 3/16*TAU);
         }
     }

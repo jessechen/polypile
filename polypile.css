@@ -1,18 +1,35 @@
 body {
     box-sizing: border-box;
     margin: 0;
+    font-family: Geneva, Tahoma, Verdana, sans-serif;
 }
 
-.controls {
+.controls-container {
     background-color: #fff;
     border: 1px solid #ccc;
     border-radius: .5em;
     margin: 0;
     position: absolute;
-    top: 1em;
-    right: 1em;
+    top: 1rem;
+    right: 1rem;
+}
+
+.controls {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
 }
 
 .pattern-selector {
-    margin: 1em;
+    width: 100%;
+    margin-bottom: .5rem;
+}
+
+.checkbox:not(:last-child) {
+    margin-bottom: .25rem;
+}
+
+.checkbox input {
+    margin-left: 0;
+    margin-right: .25rem;
 }
