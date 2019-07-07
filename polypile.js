@@ -59,6 +59,10 @@ function mouseMoved() {
     update();
 }
 
+function mouseDragged() {
+    update();
+}
+
 function updateControls() {
     update();
 }
@@ -122,8 +126,12 @@ function interpolateAngle(shape, shallowAngle, deepAngle) {
     const proximity = shape.centerPoint.distanceTo(mouseLoc);
     if (proximity <= 200) {
         return deepAngle;
+    } else if (proximity >= 400) {
+        return shallowAngle;
+    } else {
+        const proportion = (proximity - 200) / 200;
+        return deepAngle - proportion * (deepAngle - shallowAngle);
     }
-    return shallowAngle;
 }
 
 function drawStar(shape, angle) {
