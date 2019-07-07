@@ -6,6 +6,9 @@ Array.prototype.last = function() {
     return this[this.length - 1];
 };
 
+function draw() {
+}
+
 function setup() {
     canvasWidth = windowWidth;
     canvasHeight = windowHeight;
@@ -41,7 +44,31 @@ function setup() {
     update();
 }
 
-function draw() {
+function keyPressed() {
+    if (keyCode === 'G'.charCodeAt(0)) {
+        gridCheckbox.checked(!gridCheckbox.checked());
+        updateControls();
+    }
+    if (keyCode === 'S'.charCodeAt(0)) {
+        starsCheckbox.checked(!starsCheckbox.checked());
+        updateControls();
+    }
+}
+
+function mouseMoved() {
+    update();
+}
+
+function updateControls() {
+    update();
+}
+
+function update() {
+    let newTile = tileRegistry.get(tileDropdown.value());
+    if (!newTile) {
+        return;
+    }
+    drawPattern(newTile);
 }
 
 function drawPattern(tileType) {
@@ -69,36 +96,14 @@ function drawPattern(tileType) {
     }
 }
 
-function keyPressed() {
-    if (keyCode === 'G'.charCodeAt(0)) {
-        gridCheckbox.checked(!gridCheckbox.checked());
-        updateControls();
-    }
-    if (keyCode === 'S'.charCodeAt(0)) {
-        starsCheckbox.checked(!starsCheckbox.checked());
-        updateControls();
-    }
-}
-
-function updateControls() {
-    update();
-}
-
-function update() {
-    let newTile = tileRegistry.get(tileDropdown.value());
-    if (!newTile) {
-        return;
-    }
-    drawPattern(newTile);
-}
-
 function drawTile(tile) {
     for (shape of tile.shapes) {
         if (gridCheckbox.checked()) {
             drawShape(shape);
         }
         if (starsCheckbox.checked()) {
-            drawStar(shape, tile.starAngle);
+            const angle = interpolateAngle(shape, tile.shallowAngle, tile.deepAngle);
+            drawStar(shape, angle);
         }
     }
 }
@@ -110,7 +115,15 @@ function drawShape(shape) {
         vertex(p.x, p.y);
     }
     endShape(CLOSE);
-    stroke(color(0, 15, 85));
+}
+
+function interpolateAngle(shape, shallowAngle, deepAngle) {
+    const mouseLoc = new Point(mouseX, mouseY);
+    const proximity = shape.centerPoint.distanceTo(mouseLoc);
+    if (proximity <= 200) {
+        return deepAngle;
+    }
+    return shallowAngle;
 }
 
 function drawStar(shape, angle) {
@@ -135,9 +148,10 @@ function drawStar(shape, angle) {
         if (intersection) {
             line(currMidpoint.x, currMidpoint.y, intersection.x, intersection.y);
             line(prevMidpoint.x, prevMidpoint.y, intersection.x, intersection.y);
+        } else {
+            line(currMidpoint.x, currMidpoint.y, prevMidpoint.x, prevMidpoint.y);
         }
     }
-    stroke(color(0, 144, 0));
 }
 
 // Finds the intersection of two lines described by the points (p1, p2) and (p3, p4).
@@ -145,7 +159,7 @@ function drawStar(shape, angle) {
 // Algorithm from http://paulbourke.net/geometry/pointlineplane/
 function intersect(p1, p2, p3, p4) {
     let denominator = ((p4.y - p3.y) * (p2.x - p1.x) - (p4.x - p3.x) * (p2.y - p1.y));
-    if (denominator === 0) {
+    if (Math.abs(denominator) <= 0.01) {
         // Lines are parallel
         return null;
     }
@@ -184,6 +198,18 @@ class Shape {
 
         this.sides.push(new Side(this.points.last(), this.points[0]));
         this.boundingWidth = this.rightmostPoint.x - this.leftmostPoint.x;
+        this.centerPoint = this.calculateCenter();
+    }
+
+    calculateCenter() {
+        let x = 0;
+        let y = 0;
+
+        for (let p of this.points) {
+            x += p.x;
+            y += p.y;
+        }
+        return new Point(x / this.points.length, y / this.points.length);
     }
 }
 
@@ -195,6 +221,10 @@ class Point {
 
     minus(other) {
         return new Point(this.x - other.x, this.y - other.y);
+    }
+
+    distanceTo(other) {
+        return Math.sqrt(Math.pow(this.x - other.x, 2) + Math.pow(this.y - other.y, 2));
     }
 }
 
@@ -209,7 +239,7 @@ class Side {
     }
 
     length() {
-        return Math.sqrt(Math.pow(this.p2.x - this.p1.x, 2) + Math.pow(this.p2.y - this.p1.y, 2));
+        return this.p2.distanceTo(p1);
     }
 
     // Finds the angle normal to the side, pointing into the shape.
@@ -231,7 +261,8 @@ class OctoTile {
 
         this.tileOffset = this.shapes[0].boundingWidth + this.shapes[1].boundingWidth;
         this.rowOffset = this.shapes[1].leftmostPoint.minus(initialPoint);
-        this.starAngle = 3/16 * TAU;
+        this.shallowAngle = 1/16 * TAU;
+        this.deepAngle = 3/16 * TAU;
     }
 }
 
@@ -245,7 +276,8 @@ class DodecaTile {
 
         this.tileOffset = this.shapes[0].boundingWidth;
         this.rowOffset = this.shapes[2].leftmostPoint.minus(initialPoint);
-        this.starAngle = 5/24 * TAU;
+        this.shallowAngle = 3/24 * TAU;
+        this.deepAngle = 5/24 * TAU;
     }
 }
 
@@ -266,7 +298,8 @@ class DodecaHexTile {
             this.shapes[2].boundingWidth +
             this.shapes[4].boundingWidth;
         this.rowOffset = this.shapes[4].rightmostPoint.minus(initialPoint);
-        this.starAngle = 5/24 * TAU;
+        this.shallowAngle = 3/24 * TAU;
+        this.deepAngle = 5/24 * TAU;
     }
 }
 
@@ -287,7 +320,8 @@ class HexTile {
             this.shapes[2].boundingWidth +
             this.shapes[4].boundingWidth;
         this.rowOffset = this.shapes[4].rightmostPoint.minus(initialPoint);
-        this.starAngle = 5/24 * TAU;
+        this.shallowAngle = 3/24 * TAU;
+        this.deepAngle = 5/24 * TAU;
     }
 }
 
