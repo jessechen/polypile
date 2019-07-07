@@ -333,9 +333,30 @@ class HexTile {
     }
 }
 
+class DodecaTriTile {
+    static description() { return '12,4,3,3,3,3' };
+    constructor(initialPoint) {
+        this.shapes = [];
+        this.shapes.push(new Shape(initialPoint, 12, TAU/24));
+        this.shapes.push(new Shape(this.shapes[0].points[3], 4, -TAU/8));
+        this.shapes.push(new Shape(this.shapes[1].points[0], 3, TAU/8));
+        this.shapes.push(new Shape(this.shapes[1].points[1], 3, -5*TAU/8));
+        this.shapes.push(new Shape(this.shapes[1].points[2], 3, 5*TAU/8));
+        this.shapes.push(new Shape(this.shapes[1].points[3], 3, -TAU/8));
+
+        this.tileOffset =
+            this.shapes[0].boundingWidth +
+            this.shapes[1].boundingWidth;
+        this.rowOffset = this.shapes[2].rightmostPoint.minus(initialPoint);
+        this.shallowAngle = 4/24 * TAU;
+        this.deepAngle = 5/24 * TAU;
+    }
+}
+
 const tileRegistry = new Map([
     ['1', OctoTile],
     ['2', DodecaTile],
     ['3', DodecaHexTile],
-    ['4', HexTile]
+    ['4', HexTile],
+    ['5', DodecaTriTile]
 ]);
