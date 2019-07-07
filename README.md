@@ -13,6 +13,7 @@ Inspiration
 -----------
 
 https://www.youtube.com/watch?v=ld4gpQnaziU
+Algorithm and examples from http://www.cgl.uwaterloo.ca/csk/papers/gi2005.html
 
 Setup
 -----
