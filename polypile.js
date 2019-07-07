@@ -269,7 +269,7 @@ class OctoTile {
 
         this.tileOffset = this.shapes[0].boundingWidth + this.shapes[1].boundingWidth;
         this.rowOffset = this.shapes[1].leftmostPoint.minus(initialPoint);
-        this.shallowAngle = 1/16 * TAU;
+        this.shallowAngle = 2/16 * TAU;
         this.deepAngle = 3/16 * TAU;
     }
 }
@@ -284,7 +284,7 @@ class DodecaTile {
 
         this.tileOffset = this.shapes[0].boundingWidth;
         this.rowOffset = this.shapes[2].leftmostPoint.minus(initialPoint);
-        this.shallowAngle = 3/24 * TAU;
+        this.shallowAngle = 4/24 * TAU;
         this.deepAngle = 5/24 * TAU;
     }
 }
@@ -306,7 +306,7 @@ class DodecaHexTile {
             this.shapes[2].boundingWidth +
             this.shapes[4].boundingWidth;
         this.rowOffset = this.shapes[4].rightmostPoint.minus(initialPoint);
-        this.shallowAngle = 3/24 * TAU;
+        this.shallowAngle = 4/24 * TAU;
         this.deepAngle = 5/24 * TAU;
     }
 }
@@ -328,7 +328,7 @@ class HexTile {
             this.shapes[2].boundingWidth +
             this.shapes[4].boundingWidth;
         this.rowOffset = this.shapes[4].rightmostPoint.minus(initialPoint);
-        this.shallowAngle = 3/24 * TAU;
+        this.shallowAngle = 4/24 * TAU;
         this.deepAngle = 5/24 * TAU;
     }
 }
