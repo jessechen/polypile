@@ -23,7 +23,7 @@ Local development
 Deployment
 ----------
 
-Continuous deployment of the `trunk` branch
+The `trunk` branch is continuously deployed
 
 License
 -------
