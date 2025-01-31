@@ -7,7 +7,7 @@
 Production
 ----------
 
-[GitHub Pages](https://jessechen.github.io/polypile/polypile.html)
+[GitHub Pages](https://approximateknowledge.net/polypile)
 
 Inspiration
 -----------
@@ -15,10 +15,15 @@ Inspiration
 https://www.youtube.com/watch?v=ld4gpQnaziU
 Algorithm and examples from http://www.cgl.uwaterloo.ca/csk/papers/gi2005.html
 
-Setup
------
+Local development
+-----------------
 
-`python -m http.server`
+`python3 -m http.server`
+
+Deployment
+----------
+
+Continuous deployment of the `trunk` branch
 
 License
 -------
