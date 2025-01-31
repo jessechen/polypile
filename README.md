@@ -12,8 +12,8 @@ Production
 Inspiration
 -----------
 
-https://www.youtube.com/watch?v=ld4gpQnaziU
-Algorithm and examples from http://www.cgl.uwaterloo.ca/csk/papers/gi2005.html
+* https://www.youtube.com/watch?v=ld4gpQnaziU
+* Algorithm and examples from https://cs.uwaterloo.ca/~csk/publications/Papers/kaplan_2005.pdf
 
 Local development
 -----------------
