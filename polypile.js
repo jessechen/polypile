@@ -261,7 +261,7 @@ class Side {
 }
 
 class OctoTile {
-    static description() { return '8,4' };
+    static description() { return '4.8.8' };
     constructor(initialPoint) {
         this.shapes = [];
         this.shapes.push(new Shape(initialPoint, 8));
@@ -275,7 +275,7 @@ class OctoTile {
 }
 
 class DodecaTile {
-    static description() { return '12,3,3' };
+    static description() { return '3.12.12' };
     constructor(initialPoint) {
         this.shapes = [];
         this.shapes.push(new Shape(initialPoint, 12));
@@ -290,7 +290,7 @@ class DodecaTile {
 }
 
 class DodecaHexTile {
-    static description() { return '12,4,6,4,6,4' };
+    static description() { return '4.6.12' };
     constructor(initialPoint) {
         this.shapes = [];
         this.shapes.push(new Shape(initialPoint, 12));
@@ -312,7 +312,7 @@ class DodecaHexTile {
 }
 
 class HexTile {
-    static description() { return '6,4,3,4,3,4' };
+    static description() { return '3.4.6.4' };
     constructor(initialPoint) {
         this.shapes = [];
         this.shapes.push(new Shape(initialPoint, 6));
@@ -334,7 +334,7 @@ class HexTile {
 }
 
 class DodecaTriTile {
-    static description() { return '12,4,3,3,3,3' };
+    static description() { return '3.4.3.12' };
     constructor(initialPoint) {
         this.shapes = [];
         this.shapes.push(new Shape(initialPoint, 12, TAU/24));
