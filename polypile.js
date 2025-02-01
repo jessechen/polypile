@@ -353,10 +353,31 @@ class DodecaTriTile {
     }
 }
 
+class SquareTile {
+    static description() { return '3.3.4.3.4' };
+    constructor(initialPoint) {
+        this.shapes = [];
+        this.shapes.push(new Shape(initialPoint, 4, -TAU/24));
+        this.shapes.push(new Shape(this.shapes[0].points[1], 3, TAU/24));
+        this.shapes.push(new Shape(this.shapes[0].points[2], 3, -TAU/8));
+        this.shapes.push(new Shape(this.shapes[0].points[2], 4, TAU/24));
+        this.shapes.push(new Shape(this.shapes[0].points[3], 3, -TAU/24));
+        this.shapes.push(new Shape(this.shapes[0].points[3], 3, TAU/8));
+
+        this.tileOffset =
+            this.shapes[2].boundingWidth +
+            this.shapes[5].boundingWidth;
+        this.rowOffset = this.shapes[5].points[2].minus(initialPoint);
+        this.shallowAngle = 4/24 * TAU;
+        this.deepAngle = 5/24 * TAU;
+    }
+}
+
 const tileRegistry = new Map([
     ['1', OctoTile],
     ['2', DodecaTile],
     ['3', DodecaHexTile],
     ['4', HexTile],
-    ['5', DodecaTriTile]
+    ['5', DodecaTriTile],
+    ['6', SquareTile],
 ]);
