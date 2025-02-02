@@ -376,8 +376,8 @@ class SquareTile {
             this.shapes[2].boundingWidth +
             this.shapes[5].boundingWidth;
         this.rowOffset = this.shapes[5].points[2].minus(initialPoint);
-        this.shallowAngle = 4/24 * TAU;
-        this.deepAngle = 5/24 * TAU;
+        this.shallowAngle = 2/16 * TAU;
+        this.deepAngle = 3/16 * TAU;
     }
 }
 
