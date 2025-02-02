@@ -10,8 +10,8 @@ function draw() {
 }
 
 function setup() {
-    canvasWidth = windowWidth;
-    canvasHeight = windowHeight;
+    canvasWidth = windowWidth - 5;
+    canvasHeight = windowHeight - 5;
     createCanvas(canvasWidth, canvasHeight);
     background(240);
     noLoop();
