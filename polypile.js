@@ -334,7 +334,7 @@ class HexTile {
 }
 
 class DodecaTriTile {
-    static description() { return '3.4.3.12' };
+    static description() { return '3.12.12; 3.4.3.12' };
     constructor(initialPoint) {
         this.shapes = [];
         this.shapes.push(new Shape(initialPoint, 12, TAU/24));
