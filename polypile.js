@@ -41,17 +41,25 @@ function setup() {
     starsCheckbox.addClass('checkbox');
     starsCheckbox.changed(updateControls);
 
+    numbersLabel = createDiv('Choose tile (1)-(6)');
+    numbersLabel.parent(controls);
     update();
 }
 
 function keyPressed() {
-    if (keyCode === 'G'.charCodeAt(0)) {
+    if (key === 'g') {
         gridCheckbox.checked(!gridCheckbox.checked());
         updateControls();
     }
-    if (keyCode === 'S'.charCodeAt(0)) {
+    if (key === 's') {
         starsCheckbox.checked(!starsCheckbox.checked());
         updateControls();
+    }
+    for (let [k, _] of tileRegistry) {
+        if (key === k) {
+            tileDropdown.selected(k);
+            updateControls();
+        }
     }
 }
 
